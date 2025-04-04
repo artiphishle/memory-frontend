@@ -1,0 +1,23 @@
+@use './styles/font-faces';
+@use './styles/variables' as v;
+
+html
+body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 100%;
+}
+
+body {
+  font-family: v.$ff;
+  font-size: v.$fs_text;
+  margin: 0;
+  padding: 0;
+}
+
+h2 {
+  font-size: v.$fs_h2;
+}

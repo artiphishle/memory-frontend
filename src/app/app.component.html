@@ -1,0 +1,45 @@
+<div class="memory-game-container">
+  <header class="game-header">
+    <div class="category-selector">
+      <div class="category-buttons">
+        <button 
+          *ngFor="let category of categories" 
+          (click)="selectCategory(category)"
+          (keyup)="selectCategory(category)"
+          [class.active]="(selectedCategory$ | async) === category">
+          {{ category | titlecase }}
+        </button>
+      </div>
+    </div>
+    <!-- <div class="game-controls">
+      <button (click)="resetGame()" (keyup)="resetGame()">New game</button>
+      <div class="game-status">{{ gameStatus$ | async }}</div>
+    </div> -->
+  </header>
+
+  <ng-container *ngIf="gameStatus$ | async as gameStatus">
+    <div class="game-grid">
+      <div
+        *ngFor="let card of cards$ | async; let i = index; trackBy: trackByCardId"
+        class="card"
+        [class.flipped]="card.flipped"
+        [class.matched]="card.matched"
+        tabindex="0"
+        (click)="handleCardFlip($event, card.id, card, gameStatus)"
+        (keyup)="handleCardFlip($event, card.id, card, gameStatus)"
+      >
+        <div class="card-inner">
+          <div class="card-front"></div>
+          <div class="card-back" [style.backgroundImage]="card.revealedLogo ? getLogoPieceUrl(i) : 'none'">
+            <img title="Card back"
+              *ngIf="!card.revealedLogo"
+              [src]="card.imageUrl"
+              [alt]="card.label"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
+

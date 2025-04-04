@@ -1,0 +1,19 @@
+<svg width="150" height="150" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Square border -->
+  <rect 
+    x="10"
+    y="10" 
+    width="180"
+    height="180" 
+    fill="#fff"
+    stroke="#003eb4"
+    stroke-width="10"
+    view-box="10 10 170 170"
+  />
+  
+  <!-- Chevron/arrow shape -->
+  <path 
+    d="M165 25 L115 100 L165 175 L105 175 L55 100 L105 25 Z" 
+    stroke="#fff" fill="#003db4"
+  />
+</svg>
