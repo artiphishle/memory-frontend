@@ -96,8 +96,6 @@ export class AppComponent implements OnInit {
     const cardImagePaths = cards.map((card) => card.imageUrl);
 
     await preloadImages([...tilesImagePaths, ...cardImagePaths]);
-
-    console.log('✅ All images preloaded');
   }
 
   

@@ -78,7 +78,6 @@ export const gameReducer = createReducer(
   })),
 
   on(GameActions.flipCard, (state,  { cardId }) => {
-    console.log('status before init flipping', state.gameStatus)
     if (state.flippedCards.length >= 2 || state.gameStatus !== EGameStatus.Playing) return state;
   
     const updatedCards = state.cards.map((card) =>
