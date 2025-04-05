@@ -5,20 +5,25 @@
         <button
           *ngFor="let category of categories"
           (click)="selectCategory(category)"
-          (keyup)="selectCategory(category)"
+          (keyup.enter)="selectCategory(category)"
+          (keyup.space)="selectCategory(category)"
           [class.active]="(selectedCategory$ | async) === category"
         >
           {{ category | titlecase }}
         </button>
       </div>
     </div>
-    <!-- <div class="game-controls">
-      <button (click)="resetGame()" (keyup)="resetGame()">New game</button>
+    <!-- Optional Game Status / Reset Button -->
+    <!--
+    <div class="game-controls">
+      <button (click)="resetGame()" (keyup.enter)="resetGame()" (keyup.space)="resetGame()">
+        New Game
+      </button>
       <div class="game-status">{{ gameStatus$ | async }}</div>
-    </div> -->
+    </div>
+    -->
   </header>
 
-  <ng-container *ngIf="gameStatus$ | async as gameStatus">
     <div class="game-grid">
       <div
         *ngFor="let card of cards$ | async; let i = index; trackBy: trackByCardId"
@@ -26,8 +31,9 @@
         [class.flipped]="card.flipped"
         [class.matched]="card.matched"
         tabindex="0"
-        (click)="handleCardFlip($event, card.id, card, gameStatus)"
-        (keyup)="handleCardFlip($event, card.id, card, gameStatus)"
+        (click)="canFlip && handleCardClick($event, card.id, card)"
+        (keyup.enter)="canFlip && handleCardKey($event, card.id, card)"
+        (keyup.space)="canFlip && handleCardKey($event, card.id, card)"
       >
         <div class="card-inner">
           <div class="card-front"></div>
@@ -36,14 +42,13 @@
             [style.backgroundImage]="card.revealedLogo ? getLogoPieceUrl(i) : 'none'"
           >
             <img
-              title="Card back"
               *ngIf="!card.revealedLogo"
               [src]="card.imageUrl"
               [alt]="card.label"
+              title="Card image"
             />
           </div>
         </div>
       </div>
     </div>
-  </ng-container>
 </div>

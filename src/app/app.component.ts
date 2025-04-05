@@ -1,12 +1,13 @@
 import { AsyncPipe, CommonModule, NgForOf, TitleCasePipe } from '@angular/common'
-import { Component, OnInit } from '@angular/core'
-import { filter, first, Observable } from 'rxjs'
+import { Component, OnDestroy, OnInit } from '@angular/core'
+import { filter, first, Observable, Subject, takeUntil } from 'rxjs'
 import { Store } from '@ngrx/store'
 
 import * as GameActions from './store/actions/game.actions'
 import { AppState } from './store/app.state'
 import {
   selectAllCards,
+  selectFlippedCards,
   selectGameStatus,
   selectSelectedCategory,
 } from './store/selectors/game.selectors'
@@ -20,8 +21,13 @@ import { preloadImages } from './utils/preloadImages'
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+
+export class AppComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   private readonly gridSize = 4
+  
+  canFlip = true
+
   readonly EGameStatus = EGameStatus
   readonly gameStatus$: Observable<EGameStatus>
   readonly cards$: Observable<Card[]>
@@ -34,16 +40,24 @@ export class AppComponent implements OnInit {
     this.selectedCategory$ = this.store.select(selectSelectedCategory)
   }
 
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   ngOnInit(): void {
+    this.gameStatus$.pipe(takeUntil(this.destroy$))
+      .subscribe((status) => {
+        console.log('Game status changed:', status);
+        // do something with status: e.g. trigger animations, alerts, etc.
+      });
+
     // Step 1: select the category → triggers loadCards
     this.selectCategory(this.categories[0])
 
     // Step 2: wait for real cards (not initial empty array)
     this.cards$
-      .pipe(
-        filter((cards) => cards.length > 0), // wait for real content
-        first(),
-      )
+      .pipe(filter((cards) => cards.length > 0), first())
       .subscribe(async (cards) => {
         // Step 3: preload images
         await this.preloadAllGameImages(cards)
@@ -53,18 +67,27 @@ export class AppComponent implements OnInit {
       })
   }
 
-  handleCardFlip(
-    event: MouseEvent | KeyboardEvent,
-    cardId: number,
-    card: Card,
-    gameStatus: EGameStatus,
-  ) {
-    const isKeyboard = event instanceof KeyboardEvent
-    const isAllowedKey = isKeyboard ? ['Enter', ' '].includes(event.key) : true
+  handleCardFlip(event: MouseEvent | KeyboardEvent, cardId: number, card: Card) {
+      const isKeyboard = event instanceof KeyboardEvent;
+      const isAllowedKey = isKeyboard ? ['Enter', ' '].includes(event.key) : true;
+      
+      if (!this.canFlip || !isAllowedKey || card.flipped || card.matched) return;
 
-    if (gameStatus === EGameStatus.Playing && !card.flipped && !card.matched && isAllowedKey) {
-      this.flipCard(cardId)
-    }
+      this.store.select(selectFlippedCards).pipe(first()).subscribe((flipped) => {
+        this.flipCard(cardId);
+        
+        if([...flipped, cardId].length >= 2) {
+          this.store.dispatch(GameActions.setGameStatus({ status: EGameStatus.Checking }))
+        }
+      });
+  }
+
+  handleCardClick(event: Event, cardId: number, card: Card) {
+    this.handleCardFlip(event as MouseEvent, cardId, card);
+  }
+  
+  handleCardKey(event: Event, cardId: number, card: Card) {
+    this.handleCardFlip(event as KeyboardEvent, cardId, card);
   }
 
   selectCategory(category: string): void {
@@ -86,8 +109,8 @@ export class AppComponent implements OnInit {
     this.store.dispatch(GameActions.resetGame())
   }
 
-  // Required to avoid rerendering all cards which would destroy the card flip effect
-  trackByCardId(index: number, card: Card): number {
+  // Avoid all cards are rendered together which will destroy the card flip effect
+  trackByCardId(_: number, card: Card): number {
     return card.id
   }
 

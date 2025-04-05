@@ -8,7 +8,8 @@ import type { Card, UnsplashImage } from '../store/reducers/game.reducer'
   providedIn: 'root',
 })
 export class GameService {
-  private apiUrl = 'https://memory-backend-production-1803.up.railway.app/api' // Spring Boot backend URL
+  // private apiUrl = 'https://memory-backend-production-1803.up.railway.app/api' // Spring Boot backend URL
+  private apiUrl = 'http://localhost:8080/api'
 
   constructor(private http: HttpClient) {}
 

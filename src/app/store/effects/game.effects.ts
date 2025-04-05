@@ -7,6 +7,7 @@ import * as GameActions from '../actions/game.actions'
 import { AppState } from '../app.state'
 import { selectFlippedCards, selectGameState } from '../selectors/game.selectors'
 import { GameService } from '../../services/game.service'
+import { EGameStatus } from '../reducers/game.reducer'
 
 @Injectable()
 export class GameEffects {
@@ -57,14 +58,17 @@ export class GameEffects {
     this.resetFlippedCards$ = createEffect(() =>
       this.actions$.pipe(
         ofType(GameActions.noMatchFound),
-        delay(1000),
+        delay(800),
         withLatestFrom(this.store.select(selectGameState)),
-        map(([action, state]) => {
+        mergeMap(([action, state]) => {
           const updatedCards = state.cards.map((card) =>
             action.cardIds.includes(card.id) ? { ...card, flipped: false } : card,
           )
-
-          return GameActions.loadCardsSuccess({ cards: updatedCards })
+          
+          return of(
+            GameActions.setGameStatus({ status: EGameStatus.Playing }),
+            GameActions.loadCardsSuccess({ cards: updatedCards })
+          );
         }),
       ),
     )
@@ -72,29 +76,36 @@ export class GameEffects {
     this.revealMatchedCards$ = createEffect(() =>
       this.actions$.pipe(
         ofType(GameActions.matchFound),
-        delay(1000),
+        delay(800),
         withLatestFrom(this.store.select(selectGameState)),
-        map(([action, state]) => {
+        mergeMap(([action, state]) => {
           const updatedCards = state.cards.map((card) =>
-            action.cardIds.includes(card.id) ? { ...card, revealedLogo: true } : card,
+            action.cardIds.includes(card.id)
+              ? { ...card, revealedLogo: true }
+              : card,
           )
-
-          return GameActions.loadCardsSuccess({ cards: updatedCards })
-        }),
-      ),
+    
+          return of(
+            GameActions.setGameStatus({ status: EGameStatus.Playing }),
+            GameActions.loadCardsSuccess({ cards: updatedCards })
+          )
+        })
+      )
     )
 
     this.gameCompleted$ = createEffect(() =>
       this.actions$.pipe(
         ofType(GameActions.matchFound),
         withLatestFrom(this.store.select(selectGameState)),
-        map(([, state]) => {
+        mergeMap(([, state]) => {
           if (state.matchedPairs === state.totalPairs) {
-            return GameActions.gameCompleted()
+            return of(GameActions.gameCompleted());
           }
-          return { type: 'NO_ACTION' }
+          return of(
+            GameActions.setGameStatus({ status: EGameStatus.Completed })
+          );
         }),
-      ),
-    )
+      )
+    );
   }
 }

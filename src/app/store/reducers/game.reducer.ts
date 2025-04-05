@@ -4,8 +4,8 @@ import * as GameActions from '../actions/game.actions'
 export interface UnsplashImage {
   readonly title: string
   readonly url: string
-  // Not an exhaustive list (add more if useful)
 }
+
 export interface Card {
   readonly id: number
   readonly pairId: number
@@ -25,6 +25,7 @@ export enum EGameStatus {
   Playing = 'playing',
   Ready = 'ready',
 }
+
 export interface GameState {
   cards: Card[]
   selectedCategory: string
@@ -41,7 +42,7 @@ export const initialState: GameState = {
   selectedCategory: 'animals',
   flippedCards: [],
   matchedPairs: 0,
-  totalPairs: 8, // We'll use 8 pairs (16 cards, 4x4 grid)
+  totalPairs: 8, // 8 pairs (16 cards)
   gameStatus: EGameStatus.Idle,
   loading: false,
   error: null,
@@ -83,7 +84,13 @@ export const gameReducer = createReducer(
   })),
 
   on(GameActions.flipCard, (state, { cardId }) => {
-    if (state.flippedCards.length >= 2 || state.gameStatus !== EGameStatus.Playing) return state
+    // Prevent flipping if not in Playing state or already two cards flipped
+    if (
+      state.gameStatus !== EGameStatus.Playing ||
+      state.flippedCards.length >= 2
+    ) {
+      return state
+    }
 
     const updatedCards = state.cards.map((card) =>
       card.id === cardId ? { ...card, flipped: true } : card,
@@ -95,7 +102,6 @@ export const gameReducer = createReducer(
       ...state,
       cards: updatedCards,
       flippedCards: flipped,
-      gameStatus: flipped.length === 2 ? EGameStatus.Checking : state.gameStatus,
     }
   }),
 
