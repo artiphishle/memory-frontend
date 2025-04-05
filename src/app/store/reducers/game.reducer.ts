@@ -1,15 +1,20 @@
 import { createReducer, on } from "@ngrx/store"
 import * as GameActions from "../actions/game.actions"
 
+export interface UnsplashImage {
+  readonly title: string;
+  readonly url: string;
+  // Not an exhaustive list (add more if useful)
+}
 export interface Card {
-  id: number
-  pairId: number
-  imageUrl: string
-  label: string
-  name: string
-  flipped: boolean
-  matched: boolean
-  revealedLogo?: boolean;
+  readonly id: number
+  readonly pairId: number
+  readonly imageUrl: string
+  readonly label: string
+  readonly name: string
+  readonly flipped: boolean
+  readonly matched: boolean
+  readonly revealedLogo?: boolean;
 }
 
 export enum EGameStatus {
@@ -28,7 +33,7 @@ export interface GameState {
   totalPairs: number
   gameStatus: EGameStatus
   loading: boolean
-  error: any
+  error: string|null
 }
 
 export const initialState: GameState = {

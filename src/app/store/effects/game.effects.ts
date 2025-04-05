@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { of, from } from "rxjs";
+import { of } from "rxjs";
 import { map, mergeMap, catchError, withLatestFrom, delay } from "rxjs/operators";
 import { Store } from "@ngrx/store";
 import * as GameActions from "../actions/game.actions";
@@ -25,7 +25,7 @@ export class GameEffects {
       this.actions$.pipe(
         ofType(GameActions.loadCards),
         withLatestFrom(this.store.select(selectGameState)),
-        mergeMap(([action, state]) =>
+        mergeMap(([, state]) =>
           this.gameService.getCardsByCategory(state.selectedCategory).pipe(
             map((cards) => GameActions.loadCardsSuccess({ cards })),
             catchError((error) => of(GameActions.loadCardsFailure({ error })))
@@ -41,7 +41,7 @@ export class GameEffects {
           this.store.select(selectFlippedCards),
           this.store.select(selectGameState)
         ),
-        map(([action, flippedCards, state]) => {
+        map(([, flippedCards, state]) => {
           if (flippedCards.length === 2) {
             const card1 = state.cards.find((c) => c.id === flippedCards[0]);
             const card2 = state.cards.find((c) => c.id === flippedCards[1]);
@@ -95,7 +95,7 @@ export class GameEffects {
       this.actions$.pipe(
         ofType(GameActions.matchFound),
         withLatestFrom(this.store.select(selectGameState)),
-        map(([action, state]) => {
+        map(([, state]) => {
           if (state.matchedPairs === state.totalPairs) {
             return GameActions.gameCompleted();
           }

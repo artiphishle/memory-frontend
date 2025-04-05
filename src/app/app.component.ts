@@ -97,6 +97,4 @@ export class AppComponent implements OnInit {
 
     await preloadImages([...tilesImagePaths, ...cardImagePaths]);
   }
-
-  
 }

@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core"
 import { HttpClient } from "@angular/common/http"
 import { type Observable, of } from "rxjs"
 import { map, catchError } from "rxjs/operators"
-import type { Card } from "../store/reducers/game.reducer"
+import type { Card, UnsplashImage } from "../store/reducers/game.reducer"
 
 @Injectable({
   providedIn: "root",
@@ -13,7 +13,7 @@ export class GameService {
   constructor(private http: HttpClient) {}
 
   getCardsByCategory(category: string): Observable<Card[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/images?category=${category}`).pipe(
+    return this.http.get<UnsplashImage[]>(`${this.apiUrl}/images?category=${category}`).pipe(
       map((images) => this.prepareCards(images)),
       catchError((error) => {
         console.error("Error fetching images:", error)
@@ -22,7 +22,7 @@ export class GameService {
     )
   }
 
-  private prepareCards(images: any[]): Card[] {
+  private prepareCards(images: UnsplashImage[]): Card[] {
     // Take 8 images for 8 pairs (16 cards total)
     const selectedImages = images.slice(0, 8)
 
