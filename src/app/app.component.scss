@@ -1,4 +1,4 @@
-@use "../styles/variables" as v;
+@use '../styles/variables' as v;
 
 .memory-game-container {
   display: flex;
@@ -8,7 +8,7 @@
   padding: 20px;
 
   &.memory-game-container {
-    @media only screen and (min-width: v.$xs){
+    @media only screen and (min-width: v.$xs) {
       flex-direction: row;
     }
   }
@@ -16,7 +16,7 @@
 
 .game-header {
   display: flex;
-  padding: .4em;
+  padding: 0.4em;
   margin-bottom: 1rem;
 
   h1 {
@@ -38,7 +38,7 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: 0;
-    
+
     button {
       font-family: v.$ff;
       padding: 8px 16px;
@@ -100,7 +100,7 @@
   padding: 0 10px;
 
   & {
-    @media only screen and (min-width: v.$xs){
+    @media only screen and (min-width: v.$xs) {
       max-width: 80vh;
     }
   }

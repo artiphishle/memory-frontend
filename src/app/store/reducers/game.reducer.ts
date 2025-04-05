@@ -1,9 +1,9 @@
-import { createReducer, on } from "@ngrx/store"
-import * as GameActions from "../actions/game.actions"
+import { createReducer, on } from '@ngrx/store'
+import * as GameActions from '../actions/game.actions'
 
 export interface UnsplashImage {
-  readonly title: string;
-  readonly url: string;
+  readonly title: string
+  readonly url: string
   // Not an exhaustive list (add more if useful)
 }
 export interface Card {
@@ -14,7 +14,7 @@ export interface Card {
   readonly name: string
   readonly flipped: boolean
   readonly matched: boolean
-  readonly revealedLogo?: boolean;
+  readonly revealedLogo?: boolean
 }
 
 export enum EGameStatus {
@@ -23,7 +23,7 @@ export enum EGameStatus {
   Idle = 'idle',
   Loading = 'loading',
   Playing = 'playing',
-  Ready = 'ready'
+  Ready = 'ready',
 }
 export interface GameState {
   cards: Card[]
@@ -33,12 +33,12 @@ export interface GameState {
   totalPairs: number
   gameStatus: EGameStatus
   loading: boolean
-  error: string|null
+  error: string | null
 }
 
 export const initialState: GameState = {
   cards: [],
-  selectedCategory: "animals",
+  selectedCategory: 'animals',
   flippedCards: [],
   matchedPairs: 0,
   totalPairs: 8, // We'll use 8 pairs (16 cards, 4x4 grid)
@@ -82,37 +82,37 @@ export const gameReducer = createReducer(
     error,
   })),
 
-  on(GameActions.flipCard, (state,  { cardId }) => {
-    if (state.flippedCards.length >= 2 || state.gameStatus !== EGameStatus.Playing) return state;
-  
+  on(GameActions.flipCard, (state, { cardId }) => {
+    if (state.flippedCards.length >= 2 || state.gameStatus !== EGameStatus.Playing) return state
+
     const updatedCards = state.cards.map((card) =>
-      card.id === cardId ? { ...card, flipped: true } : card
-    );
-  
-    const flipped = [...state.flippedCards, cardId];
-    
+      card.id === cardId ? { ...card, flipped: true } : card,
+    )
+
+    const flipped = [...state.flippedCards, cardId]
+
     return {
       ...state,
       cards: updatedCards,
       flippedCards: flipped,
-      gameStatus: flipped.length === 2 ? EGameStatus.Checking : state.gameStatus
-    };
+      gameStatus: flipped.length === 2 ? EGameStatus.Checking : state.gameStatus,
+    }
   }),
-  
+
   on(GameActions.matchFound, (state, { cardIds }) => ({
     ...state,
     cards: state.cards.map((card) =>
-      cardIds.includes(card.id) ? { ...card, matched: true } : card
+      cardIds.includes(card.id) ? { ...card, matched: true } : card,
     ),
     flippedCards: [],
     matchedPairs: state.matchedPairs + 1,
-    gameStatus: EGameStatus.Playing
+    gameStatus: EGameStatus.Playing,
   })),
 
   on(GameActions.noMatchFound, (state) => ({
     ...state,
     flippedCards: [],
-    gameStatus: EGameStatus.Playing
+    gameStatus: EGameStatus.Playing,
   })),
 
   on(GameActions.resetGame, () => ({
@@ -127,7 +127,5 @@ export const gameReducer = createReducer(
   on(GameActions.setGameStatus, (state, { status }) => ({
     ...state,
     gameStatus: status,
-  }))
-
+  })),
 )
-

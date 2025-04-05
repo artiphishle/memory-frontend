@@ -1,17 +1,17 @@
-import { importProvidersFrom } from '@angular/core';
-import { bootstrapApplication } from '@angular/platform-browser';
-import { provideHttpClient } from '@angular/common/http';
+import { importProvidersFrom } from '@angular/core'
+import { bootstrapApplication } from '@angular/platform-browser'
+import { provideHttpClient } from '@angular/common/http'
 
-import { AppComponent } from './app/app.component';
+import { AppComponent } from './app/app.component'
 
-import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { StoreModule } from '@ngrx/store'
+import { EffectsModule } from '@ngrx/effects'
+import { StoreDevtoolsModule } from '@ngrx/store-devtools'
 
-import { gameReducer } from './app/store/reducers/game.reducer';
-import { GameEffects } from './app/store/effects/game.effects';
+import { gameReducer } from './app/store/reducers/game.reducer'
+import { GameEffects } from './app/store/effects/game.effects'
 
-import { environment } from './environments/environment';
+import { environment } from './environments/environment'
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -24,6 +24,6 @@ bootstrapApplication(AppComponent, {
         maxAge: 25,
         logOnly: environment.production,
       }),
-    )
-  ]
-}).catch(err => console.error(err));
+    ),
+  ],
+}).catch((err) => console.error(err))

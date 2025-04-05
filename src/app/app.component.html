@@ -2,11 +2,12 @@
   <header class="game-header">
     <div class="category-selector">
       <div class="category-buttons">
-        <button 
-          *ngFor="let category of categories" 
+        <button
+          *ngFor="let category of categories"
           (click)="selectCategory(category)"
           (keyup)="selectCategory(category)"
-          [class.active]="(selectedCategory$ | async) === category">
+          [class.active]="(selectedCategory$ | async) === category"
+        >
           {{ category | titlecase }}
         </button>
       </div>
@@ -30,8 +31,12 @@
       >
         <div class="card-inner">
           <div class="card-front"></div>
-          <div class="card-back" [style.backgroundImage]="card.revealedLogo ? getLogoPieceUrl(i) : 'none'">
-            <img title="Card back"
+          <div
+            class="card-back"
+            [style.backgroundImage]="card.revealedLogo ? getLogoPieceUrl(i) : 'none'"
+          >
+            <img
+              title="Card back"
               *ngIf="!card.revealedLogo"
               [src]="card.imageUrl"
               [alt]="card.label"
@@ -42,4 +47,3 @@
     </div>
   </ng-container>
 </div>
-

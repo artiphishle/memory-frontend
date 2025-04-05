@@ -1,14 +1,14 @@
-import { Injectable } from "@angular/core"
-import { HttpClient } from "@angular/common/http"
-import { type Observable, of } from "rxjs"
-import { map, catchError } from "rxjs/operators"
-import type { Card, UnsplashImage } from "../store/reducers/game.reducer"
+import { Injectable } from '@angular/core'
+import { HttpClient } from '@angular/common/http'
+import { type Observable, of } from 'rxjs'
+import { map, catchError } from 'rxjs/operators'
+import type { Card, UnsplashImage } from '../store/reducers/game.reducer'
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class GameService {
-  private apiUrl = "https://memory-backend-production-1803.up.railway.app/api" // Spring Boot backend URL
+  private apiUrl = 'https://memory-backend-production-1803.up.railway.app/api' // Spring Boot backend URL
 
   constructor(private http: HttpClient) {}
 
@@ -16,7 +16,7 @@ export class GameService {
     return this.http.get<UnsplashImage[]>(`${this.apiUrl}/images?category=${category}`).pipe(
       map((images) => this.prepareCards(images)),
       catchError((error) => {
-        console.error("Error fetching images:", error)
+        console.error('Error fetching images:', error)
         return of(this.getFallbackCards()) // Fallback to local data if API fails
       }),
     )
@@ -36,7 +36,7 @@ export class GameService {
         id: id++,
         pairId: index,
         imageUrl: image.url,
-        label: "Card",
+        label: 'Card',
         name: image.title || `Card ${index}`,
         flipped: false,
         matched: false,
@@ -46,7 +46,7 @@ export class GameService {
         id: id++,
         pairId: index,
         imageUrl: image.url,
-        label: "Card",
+        label: 'Card',
         name: image.title || `Card ${index}`,
         flipped: false,
         matched: false,
@@ -81,4 +81,3 @@ export class GameService {
     return this.prepareCards(placeholders)
   }
 }
-
